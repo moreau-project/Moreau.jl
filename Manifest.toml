@@ -2,7 +2,7 @@
 
 julia_version = "1.12.2"
 manifest_format = "2.0"
-project_hash = "a777107f5a08cadc0d640f24d4ada54f7551fbcf"
+project_hash = "1a196ab112438683518b83e6dc7f79f6274152d1"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -132,6 +132,18 @@ version = "1.4.0"
     [deps.JSON.weakdeps]
     ArrowTypes = "31f734f8-188a-4ce0-8406-c8a06bd891cd"
 
+[[deps.JuMP]]
+deps = ["LinearAlgebra", "MacroTools", "MathOptInterface", "MutableArithmetics", "OrderedCollections", "PrecompileTools", "Printf", "SparseArrays"]
+git-tree-sha1 = "4091a1338a0e32766b11b9bd3fac247d34200c77"
+uuid = "4076af6c-e467-56ae-b986-b466b2749572"
+version = "1.30.0"
+
+    [deps.JuMP.extensions]
+    JuMPDimensionalDataExt = "DimensionalData"
+
+    [deps.JuMP.weakdeps]
+    DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
+
 [[deps.JuliaSyntaxHighlighting]]
 deps = ["StyledStrings"]
 uuid = "ac6e5ff7-fb65-4e79-a425-ec3bc9c03011"
@@ -198,9 +210,9 @@ uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 version = "1.49.0"
 
 [[deps.Moreau]]
-deps = ["Libdl", "LinearAlgebra", "MathOptInterface", "Moreau_CPU_jll", "Moreau_CUDA_jll", "SparseArrays"]
+deps = ["JuMP", "Libdl", "LinearAlgebra", "MathOptInterface", "Moreau_CPU_jll", "Moreau_CUDA_jll", "SparseArrays"]
 path = "."
-uuid = "c8b129f6-74e5-4f0d-b2d8-2ea10d91a548"
+uuid = "a1b2c3d4-5678-9abc-def0-123456789abc"
 version = "0.1.0"
 
     [deps.Moreau.extensions]
@@ -214,13 +226,13 @@ version = "0.1.0"
 [[deps.Moreau_CPU_jll]]
 deps = ["Artifacts", "Downloads", "Libdl", "SHA"]
 path = "../Moreau_CPU_jll.jl"
-uuid = "86198e50-5f62-4a36-ad76-2092ace74372"
+uuid = "d4e501a0-2b1a-4e5a-9b3c-f1a2b3c4d5e6"
 version = "0.1.0"
 
 [[deps.Moreau_CUDA_jll]]
 deps = ["Artifacts", "Downloads", "Libdl", "SHA"]
 path = "../Moreau_CUDA_jll.jl"
-uuid = "8300562c-07d5-42e2-bc97-74014b4096bd"
+uuid = "e5f601b0-3c2a-4f6d-a8b7-c9d0e1f2a3b4"
 version = "0.1.0"
 
 [[deps.MozillaCACerts_jll]]
