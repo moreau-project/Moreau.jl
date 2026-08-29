@@ -6,7 +6,6 @@
     MOREAU_OK = 0
     MOREAU_ERROR_INVALID_ARGUMENT = 1
     MOREAU_ERROR_NOT_SETUP = 2
-    MOREAU_ERROR_LICENSE = 3
     MOREAU_ERROR_NUMERICAL = 4
     MOREAU_ERROR_OUT_OF_MEMORY = 5
     MOREAU_ERROR_CUDA = 6
@@ -443,27 +442,23 @@ function _choose_device(n::Int, nnz_A::Int, batch_size::Int=1)
         dev = _default_device[]
         dev == :auto || return dev
     end
-    # If CUDA not available, always CPU
-    !cuda_available() && return :cpu
     # Small problems: CPU wins due to CUDA overhead (~25ms cuDSS init)
     n < 500 && return :cpu
-    # Large problems: CUDA wins
-    n >= 750 && return :cuda
-    # Medium problems: depends on nnz_A and batch_size
-    nnz_A >= 50_000 && return :cuda
-    batch_size >= 2 && nnz_A >= 25_000 && return :cuda
-    return :cpu
+    # Decide whether the problem benefits from CUDA before probing or
+    # downloading the lazy CUDA artifact.
+    use_cuda = n >= 750 || nnz_A >= 50_000 || (batch_size >= 2 && nnz_A >= 25_000)
+    return use_cuda && cuda_available() ? :cuda : :cpu
 end
 
 function _get_lib(device::Symbol)
     if device == :cpu
         return libmoreau
     elseif device == :cuda
-        if !cuda_available()
+        if !_load_cuda_library(; allow_fallback=true)
             error("CUDA device requested but Moreau CUDA library is not available. " *
                   "Set MOREAU_CUDA_LIB or install the CUDA artifact.")
         end
-        return Moreau_CUDA_jll.libmoreau_cuda
+        return libmoreau_cuda
     else
         error("Unknown device: $device. Use :cpu, :cuda, or :auto.")
     end
@@ -480,7 +475,10 @@ Solve a conic QP using the Moreau solver.
 
 # Problem formulation
     minimize    (1/2)x'Px + q'x
-    subject to  Ax + s = b,  s ∈ K
+    subject to  Ax + s = b
+                x ∈ K1,  s ∈ K2
+
+K2 constrains the slack s; K1 constrains x directly (direct-x cones).
 
 # Arguments
 - `n::Int`: Number of primal variables
